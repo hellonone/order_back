@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jxd.order.dao.OrderMapper">
+    <!--  boolean insert(Order order); -->
+    <!-- <insert id="insert"> -->
+    <!--     insert into `order`(`time`, applyno, type, `count`, sum, `status`, note) -->
+    <!--     values (#{time}, #{applyno}, #{type}, #{count}, #{sum}, #{status}, #{note}) -->
+    <!-- </insert> -->
+    <!-- IPage<Order> selectListBySearch(); -->
+    <select id="selectListBySearch" resultType="com.jxd.order.vo.OrderEmpVO">
+        select jo.orderno,
+               time,
+               applyno,
+               type,
+               count,
+               sum,
+               status,
+               note,
+               e.deptno
+        from (select o.orderno,
+                     time,
+                     applyno,
+                     type,
+                     count,
+                     sum,
+                     status,
+                     note,
+                     empno,
+                     deptno
+              from `order` o
+                       left join emp_order eo on o.orderno = eo.orderno) jo
+                 left join emp e on e.empno = jo.empno
+        <where>
+            <if test="queryDTO.applyno != null">
+                applyno = #{queryDTO.applyno}
+            </if>
+            <if test="queryDTO.deptno != null">
+                and e.deptno = #{queryDTO.deptno}
+            </if>
+            <if test="queryDTO.status != null">
+                and status = #{queryDTO.status}
+            </if>
+            <if test="queryDTO.timeStart != null and queryDTO.timeStart != ''">
+                and `time` &gt;= #{queryDTO.timeStart}
+            </if>
+            <if test="queryDTO.timeEnd != null and queryDTO.timeEnd != ''">
+                and `time` &lt;= #{queryDTO.timeEnd}
+            </if>
+            <if test="queryDTO.sumStart != null">
+                and sum &gt;= #{queryDTO.sumStart}
+            </if>
+            <if test="queryDTO.sumEnd != null">
+                and sum &lt;= #{queryDTO.timeEnd}
+            </if>
+            <if test="queryDTO.ename != null and queryDTO.ename != ''">
+                and ename like '%' #{queryDTO.ename} '%'
+            </if>
+            <if test="queryDTO.orderno != null">
+                and orderno = #{queryDTO.orderno}
+            </if>
+        </where>
+        group by jo.orderno
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="orderno" keyColumn="orderno"
+            parameterType="com.jxd.order.model.Order">
+        insert into `order`(`time`, applyno, type, `count`, sum, `status`, note)
+        values (#{time}, #{applyno}, #{type}, #{count}, #{sum}, #{status}, #{note})
+    </insert>
+
+    <select id="selectList" resultType="com.jxd.order.vo.OrderEmpVO">
+    </select>
+
+    <update id="updateStatus">
+        update `order`
+        set status = #{status}
+        where orderno in
+        <foreach collection="ordernos" item="orderno" close=")" open="(" separator=",">
+            #{orderno}
+        </foreach>
+    </update>
+</mapper>
+
+        <!--
+            原先使用对象绑定数组方式有无现在更正
+            <select id="selectListBySearch" resultMap="orderEmpMap">
+                select orderno,
+                       time,
+                       applyno,
+                       type,
+                       count,
+                       sum,
+                       status,
+                       note,
+                       emp_orderno,
+                       e.empno,
+                       ename
+                from (select o.orderno,
+                             time,
+                             applyno,
+                             type,
+                             count,
+                             sum,
+                             status,
+                             note,
+                             emp_orderno,
+                             empno
+                      from `order` o
+                               inner join emp_order eo on o.orderno = eo.orderno) jo
+                         left join emp e
+                                   on jo.empno = e.empno
+            </select>
+        <resultMap id="orderEmpMap" type="com.jxd.order.vo.OrderEmpVO">
+        <id property="orderno" column="orderno"/>
+        <result property="time" column="time"/>
+        <result property="applyno" column="applyno"/>
+        <result property="type" column="type"/>
+        <result property="count" column="count"/>
+        <result property="sum" column="sum"/>
+        <result property="status" column="status"/>
+        <result property="note" column="note"/>
+        <collection property="empTempVOS" ofType="com.jxd.order.vo.EmpTempVO">
+            <id property="empOrderno" column="emp_orderno"/>
+            <result property="ename" column="ename"/>
+            <result property="empno" column="empno"/>
+        </collection>
+        </resultMap>
+         -->

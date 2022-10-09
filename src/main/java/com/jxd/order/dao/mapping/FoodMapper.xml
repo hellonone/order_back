@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jxd.order.dao.FoodMapper">
+    <select id="selectByPage" resultType="com.jxd.order.model.Food">
+        select foodno, fname, price
+        from food
+    </select>
+
+    <insert id="insert">
+        insert into food(fname, price)
+        values (#{fname}, #{price})
+    </insert>
+
+    <select id="selectList" resultType="com.jxd.order.model.Food">
+        select foodno, fname, price
+        from food;
+    </select>
+
+    <select id="selectGroup" resultType="com.jxd.order.vo.FoodOrderVO">
+        select orderno, order_foodno, f.foodno, fname, count
+        from order_food o
+                 inner join food f
+                            on o.foodno = f.foodno
+        where o.orderno in
+        <foreach collection="list" separator="," open="(" close=")" item="orderno">
+            #{orderno}
+        </foreach>
+        order by f.foodno
+    </select>
+
+    <update id="update">
+        update food
+        set fname = #{fname},
+            price = #{price}
+        where foodno = #{foodno}
+    </update>
+
+    <delete id="deleteBatch">
+        delete
+        from food where foodno in
+        <foreach collection="list" separator="," open="(" close=")" item="foodno">
+            #{foodno}
+        </foreach>
+    </delete>
+
+    <select id="selectById" resultType="com.jxd.order.model.Food">
+        select foodno, fname, price
+        from food
+        where foodno = #{foodno}
+    </select>
+</mapper>

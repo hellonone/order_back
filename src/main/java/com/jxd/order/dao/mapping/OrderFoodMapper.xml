@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jxd.order.dao.OrderFoodMapper">
+    <!-- IPage<OrderFood> selectByPage(IPage<OrderFood> page); -->
+    <select id="selectByPage" resultType="com.jxd.order.model.OrderFood">
+        select order_foodno, orderno, foodno, count, price, note
+        from order_food;
+    </select>
+
+    <insert id="insert">
+        insert into order_food (orderno, foodno, count, price, note)
+        VALUES
+        <foreach collection="list" item="orderFood" separator=",">
+            (#{orderFood.orderno}, #{orderFood.foodno}, #{orderFood.count}, #{orderFood.price}, #{orderFood.note})
+        </foreach>
+    </insert>
+</mapper>

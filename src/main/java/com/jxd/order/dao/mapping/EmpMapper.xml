@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jxd.order.dao.EmpMapper">
+    <insert id="insert">
+        insert into emp(ename, sex, tel, deptno, job)
+        VALUES (#{ename}, #{sex}, #{tel}, #{deptno}, #{job})
+    </insert>
+    <!-- List<EmpUserDeptVO> selectByDeptOrName(@Param("ename") String ename, @Param("deptno") Integer deptno); -->
+    <select id="selectByDeptOrName" resultType="com.jxd.order.vo.EmpUserDeptVO">
+        select empno, ename, sex, tel, job, d.deptno, dname
+        from emp e
+                 inner join dept d on e.deptno = d.deptno
+        where e.deptno = #{deptno}
+        <if test="ename != null and ename != ''">
+            and ename like '%' #{ename} '%'
+        </if>
+    </select>
+
+    <select id="selectByOrdernos" resultType="com.jxd.order.vo.EmpTempVO">
+        select jo.empno,
+               ename,
+               sex,
+               tel,
+               job,
+               jo.deptno,
+               dname,
+               emp_orderno,
+               orderno
+        from (select empno, ename, sex, tel, job, d.deptno, dname
+              from emp e
+                       left join dept d on e.deptno = d.deptno) jo
+                 left join emp_order eo on jo.empno = eo.empno
+        where orderno = -1
+        <if test="list != null and list.size() != 0">
+            or orderno in
+            <foreach collection="list" open="(" item="orderno" separator="," close=")">
+                #{orderno}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="selectByEmpno" resultType="com.jxd.order.vo.EmpUserDeptVO">
+        select empno, ename, e.deptno, dname, tel, job
+        from emp e
+                 left join dept d on e.deptno = d.deptno
+        where e.empno = #{empno}
+    </select>
+
+    <select id="selectEmpByDeptno" resultType="com.jxd.order.model.Emp">
+        select empno, ename, sex, tel, deptno, job
+        from emp
+        where deptno = #{deptno}
+    </select>
+
+
+    <update id="updateById">
+        update emp
+        set ename = #{ename},
+            sex=#{sex},
+            job=#{job},
+            tel=#{tel},
+            deptno=#{deptno}
+        where empno = #{empno}
+    </update>
+
+    <delete id="deleteBatch">
+        delete
+        from emp
+        where empno in
+        <foreach collection="list" item="empno" close=")" open="(" separator=",">
+            #{empno}
+        </foreach>
+    </delete>
+
+    <select id="selectAllBySearch" resultType="com.jxd.order.vo.EmpTempVO">
+        select empno, ename, sex, tel, job, e.deptno, dname
+        from emp e
+                 inner join dept d on e.deptno = d.deptno
+        <where>
+            <if test="map.ename != null || map.ename != ''">
+                ename like '%' #{map.ename} '%'
+            </if>
+        </where>
+    </select>
+
+    <select id="selectAllDept" resultType="com.jxd.order.model.Dept">
+        select deptno, dname
+        from dept
+    </select>
+
+    <select id="selectEmpByEmpno" resultType="com.jxd.order.model.Emp">
+        select empno, ename, sex, tel, deptno, job
+        from emp
+        where empno = #{empno}
+    </select>
+</mapper>
