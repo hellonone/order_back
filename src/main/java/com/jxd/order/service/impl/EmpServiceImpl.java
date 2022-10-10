@@ -41,7 +41,7 @@ public class EmpServiceImpl implements IEmpService {
     /**
      * @param ename      员工姓名
      * @param deptno     员工编号
-     * @param isDistinct
+     * @param isDistinct 是否需要去除重复员工
      * @return 列表
      */
     @Override
