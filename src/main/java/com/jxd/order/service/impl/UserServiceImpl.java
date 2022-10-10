@@ -7,6 +7,7 @@ import com.jxd.order.service.IUserService;
 import com.jxd.order.vo.EmpUserDeptVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @ClassName UserServiceImpl
@@ -33,6 +34,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    @Transactional
     public boolean register(User user) {
         Integer empno = user.getEmpno();
         if (userMapper.selectByEmpno(empno) != null) {

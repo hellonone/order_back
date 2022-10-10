@@ -14,6 +14,7 @@ import com.jxd.order.vo.EmpUserDeptVO;
 import com.jxd.order.vo.OrderEmpVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -44,6 +45,7 @@ public class EmpServiceImpl implements IEmpService {
      * @return 列表
      */
     @Override
+    @Transactional
     public List<EmpUserDeptVO> selectByDeptOrName(String ename, Integer deptno, Boolean isDistinct) {
         /* 为了代码的复用性，此代码将分为两部分，如果传入参数中有是否去重的标志，则去重 */
         if (!isDistinct) {

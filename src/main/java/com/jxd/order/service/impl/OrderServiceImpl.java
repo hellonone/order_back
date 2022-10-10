@@ -16,6 +16,7 @@ import com.jxd.order.vo.EmpTempVO;
 import com.jxd.order.vo.OrderEmpVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +46,7 @@ public class OrderServiceImpl implements IOrderService {
      * @param orderAddDTO@return 是否成功
      */
     @Override
+    @Transactional
     public boolean saveOrder(OrderAddDTO orderAddDTO) {
         // 根据orderAddDTO里面的内容，封装一个order对象
         Order order = new Order();
@@ -90,6 +92,7 @@ public class OrderServiceImpl implements IOrderService {
      * @return 订单
      */
     @Override
+    @Transactional
     public Map<String, Object> getListPage(OrderQueryDTO queryDTO) {
         /* 取出queryDTO中的查询参数 */
         Long currPage = queryDTO.getCurrPage();
