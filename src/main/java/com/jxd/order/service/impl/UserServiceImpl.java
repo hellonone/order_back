@@ -33,6 +33,11 @@ public class UserServiceImpl implements IUserService {
         return userMapper.selectByNameAndPwd(username, password);
     }
 
+    /**
+     * 注册方法
+     * @param user 新增的用户名
+     * @return 返回是否成功
+     */
     @Override
     @Transactional
     public boolean register(User user) {
